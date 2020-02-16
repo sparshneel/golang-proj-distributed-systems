@@ -2,7 +2,9 @@ package repository
 
 import (
 	"github.com/gocql/gocql"
+
 	"sync"
+
 	"golang-proj-distributed-systems/helpers"
 	)
 

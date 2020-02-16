@@ -1,15 +1,34 @@
 package http_server
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"golang-proj-distributed-systems/domain"
+	service "golang-proj-distributed-systems/sevice"
 )
 
-func addBusiness(c *gin.Context) {}
+var(
+	router = gin.Default()
+)
 
-func getBusiness(c *gin.Context){}
+func AddBusiness(c *gin.Context) {
+	var b domain.Business
+	err := json.NewDecoder(c.Request.Body).Decode(&b)
+	if err != nil{
+		//errors.NewB
+	}
+	service.AddBusiness()
+	c.JSON(201, gin.H{
+			"message": "Business added successfully",
+		})
+}
 
-func getBusinessById(c *gin.Context){}
+func GetBusiness(c *gin.Context){
 
-func updateBusiness(c *gin.Context){}
+}
 
-func deleteBusiness(c *gin.Context){}
+func GetBusinessById(c *gin.Context){}
+
+func UpdateBusiness(c *gin.Context){}
+
+func DeleteBusiness(c *gin.Context){}

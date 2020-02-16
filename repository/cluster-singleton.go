@@ -2,13 +2,9 @@ package repository
 
 import (
 	"github.com/gocql/gocql"
-	"golang-proj-distributed-systems/helpers"
-	"sync"
-)
 
-go getimport (
-	"github.com/gin-gonic/gin/helpers"
-	"github.com/gocql/gocql"
+	"golang-proj-distributed-systems/helpers"
+
 	"sync"
 )
 

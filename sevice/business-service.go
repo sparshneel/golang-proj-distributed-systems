@@ -1,9 +1,10 @@
-package sevice
+package service
 
 import(
-	"github.com/gin-gonic/gin/domain"
-	"github.com/gin-gonic/gin/helpers"
-	"github.com/gin-gonic/gin/repository"
+	"golang-proj-distributed-systems/domain"
+	"golang-proj-distributed-systems/helpers"
+	"golang-proj-distributed-systems/repository"
+
 	"github.com/sirupsen/logrus"
 
 	"reflect"
