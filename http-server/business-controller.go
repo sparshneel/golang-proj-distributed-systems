@@ -17,18 +17,34 @@ func AddBusiness(c *gin.Context) {
 	if err != nil{
 		//errors.NewB
 	}
-	service.AddBusiness()
+	service.AddBusiness(b)
 	c.JSON(201, gin.H{
 			"message": "Business added successfully",
 		})
 }
 
-func GetBusiness(c *gin.Context){
-
+func GetBusiness(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "Implement me ",
+	})
 }
 
-func GetBusinessById(c *gin.Context){}
+func GetBusinessById(c *gin.Context){
 
-func UpdateBusiness(c *gin.Context){}
+	c.JSON(200, gin.H{
+		"message": "Implement me ",
+	})
+}
 
-func DeleteBusiness(c *gin.Context){}
+func UpdateBusiness(c *gin.Context){
+
+	c.JSON(200, gin.H{
+		"message": "Implement me ",
+	})
+}
+
+func DeleteBusiness(c *gin.Context){
+	c.JSON(200, gin.H{
+		"message": "Implement me ",
+	})
+}

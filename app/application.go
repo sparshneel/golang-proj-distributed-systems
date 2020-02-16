@@ -9,7 +9,7 @@ var (
 	router = gin.Default()
 )
 
-func StartAppliaction() {
+func StartApplication() {
 
 	router.Run("8080")
 }
