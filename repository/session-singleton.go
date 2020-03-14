@@ -14,7 +14,7 @@ var once sync.Once
 var sessionInstance *gocql.Session
 var err error
 
-func  getSessionInstance() *gocql.Session {
+func  GetSessionInstance() *gocql.Session {
 
 	once.Do(func() {
 		sessionInstance, err = getClusterInstance().CreateSession()

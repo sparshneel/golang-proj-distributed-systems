@@ -7,14 +7,8 @@ import(
 type Business struct{
 	Id 				string
 	Name            string
-    BusinessAddress *Address
+    BusinessAddress string
 	Telephone       int64
-}
-
-type Address struct{
-	Street 	string
-	City 	string
-	Postcode int64
 }
 
 type Parking struct{

@@ -1,45 +1,41 @@
 package service
 
-import(
+import (
+	"github.com/scylladb/gocqlx"
 	"golang-proj-distributed-systems/domain"
 	"golang-proj-distributed-systems/helpers"
 	"golang-proj-distributed-systems/repository"
 
+	"github.com/scylladb/gocqlx/qb"
 	"github.com/sirupsen/logrus"
-
-	"reflect"
-	"strings"
 )
 
 
-func AddBusiness(business domain.Business) {
+func AddBusiness(business *domain.Business) {
 	logrus.Info("starting save record - table : " + helpers.Table)
-	repository.Save(business)
+	stmt, names := qb.Insert(helpers.Table).Columns(helpers.GetColumnNames(business)).ToCql()
+	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt), names).BindStruct(business)
+	repository.Save(q)
 	logrus.Info("record added successfully to table : " + helpers.Table)
 }
 
-func Update(business domain.Business){
+func UpdateBusiness(business *domain.Business){
 	logrus.Info("building update query")
-	stringBuilder := strings.Builder{}
-	stringBuilder.WriteString(helpers.UPDATE + " ")
-	stringBuilder.WriteString(helpers.Table)
-	stringBuilder.WriteString(" set ")
-	e := reflect.ValueOf(business).Elem()
-	for i := 0; i < e.NumField(); i++ {
-		varName := e.Type().Field(i).Name
-		varValue := e.Field(i).String()
-		stringBuilder.WriteString(varName + "=" + varValue)
-	}
-	repository.UpdateRecords(stringBuilder.String())
+	stmt, names:= qb.Update(helpers.Table).Set(helpers.GetColumnNames(business)).Where(qb.Eq("id")).ToCql()
+	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt),names).BindStruct(business)
+	repository.UpdateRecords(q)
 }
 
-func Delete(businessId string){
+func DeleteBusiness(business *domain.Business){
 	logrus.Info("building delete query")
-	stringBuilder := strings.Builder{}
-	stringBuilder.WriteString(helpers.DELETE + " from ")
-	stringBuilder.WriteString(helpers.Table + " where ")
-	stringBuilder.WriteString("id=" + businessId)
-	logrus.Info("updating records for table " + helpers.Table)
-	repository.DeleteRecords(stringBuilder.String())
-	logrus.Info("done updating records for table " + helpers.Table)
+	stmt,names := qb.Delete(helpers.Table).Existing().Where(qb.Eq("id")).ToCql()
+	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt),names).BindStruct(business)
+	logrus.Info("deleting records for table " + helpers.Table)
+	repository.DeleteRecords(q)
+	logrus.Info("done deleting records for table " + helpers.Table)
 }
+
+func GetBusinessData(){
+
+}
+

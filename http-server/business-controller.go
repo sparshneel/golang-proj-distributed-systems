@@ -12,7 +12,7 @@ var(
 )
 
 func AddBusiness(c *gin.Context) {
-	var b domain.Business
+	var b *domain.Business
 	err := json.NewDecoder(c.Request.Body).Decode(&b)
 	if err != nil{
 		//errors.NewB
