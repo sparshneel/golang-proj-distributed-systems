@@ -5,6 +5,7 @@ import (
 	"golang-proj-distributed-systems/domain"
 	"golang-proj-distributed-systems/helpers"
 	"golang-proj-distributed-systems/repository"
+	"strings"
 
 	"github.com/scylladb/gocqlx/qb"
 	"github.com/sirupsen/logrus"
@@ -26,16 +27,21 @@ func UpdateBusiness(business *domain.Business){
 	repository.UpdateRecords(q)
 }
 
-func DeleteBusiness(business *domain.Business){
+func DeleteBusiness(businessId string){
 	logrus.Info("building delete query")
 	stmt,names := qb.Delete(helpers.Table).Existing().Where(qb.Eq("id")).ToCql()
-	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt),names).BindStruct(business)
+	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt),names).BindStruct(businessId)
 	logrus.Info("deleting records for table " + helpers.Table)
 	repository.DeleteRecords(q)
 	logrus.Info("done deleting records for table " + helpers.Table)
 }
 
-func GetBusinessData(){
-
+func GetBusinessData(filterIds map [string]string) []domain.Business{
+	logrus.Info("building select query")
+	columns := "id,city,name,state,pincode"
+	stmt, names :=qb.Select(helpers.Table).Columns(helpers.GetColumnsNamesFromArray(strings.Split(columns,","))).Where(qb.Eq("city"),qb.Eq("state")).ToCql()
+	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt),names).BindStruct(filterIds)
+	business := repository.QueryRecords(q)
+	return business
 }
 

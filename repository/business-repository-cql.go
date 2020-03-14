@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/scylladb/gocqlx"
+	"golang-proj-distributed-systems/domain"
 
 	"golang-proj-distributed-systems/helpers"
 
@@ -35,6 +36,18 @@ func DeleteRecords(query *gocqlx.Queryx) {
 		panic("error deleting records from table " + helpers.Table + " query: " + query.String())
 	}
 	logrus.Info(" done deleting records from table " + helpers.Table + " query: " + query.String())
+}
+
+func QueryRecords(query *gocqlx.Queryx) []domain.Business{
+	var records [] domain.Business
+	logrus.Info("fetching records from the table " + helpers.Table + " query: " + query.String())
+	err := query.GetRelease(&records)
+	if err != nil{
+		logrus.Info("error fetching records from table " + helpers.Table + " query: " + query.String())
+		panic("error fetching records from table " + helpers.Table + " query: " + query.String())
+	}
+	logrus.Info(" done fetching records form table " +  helpers.Table + " query: " + query.String())
+    return records
 }
 
 
