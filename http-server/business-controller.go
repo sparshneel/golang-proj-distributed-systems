@@ -1,8 +1,10 @@
 package http_server
 
+import "C"
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"golang-proj-distributed-systems/domain"
 	service "golang-proj-distributed-systems/sevice"
 )
@@ -33,13 +35,13 @@ func GetBusiness(c *gin.Context) {
 func GetBusinessById(c *gin.Context){
 	filterIds :=make(map[string]string)
 	filterIds["id"] = c.Param("id")
-	filterIds["city"] = c.Param("city")
-	filterIds["state"] = c.Param("state")
-	//business := service.GetBusinessData(filterIds)
-	//err := json.NewEncoder(c.).Encode(business)
-	c.JSON(200, gin.H{
-		"message": "Implement me ",
-	})
+	filterIds["city"] = c.Query("city")
+	filterIds["state"] = c.Query("state")
+	logrus.Info("parameters passed for the get request, id: " + c.Param("id") + " " + c.Query("city") + " " + c.Query("state"))
+	business := service.GetBusinessData(filterIds)
+	logrus.Info(business)
+	c.JSON(200, business)
+
 }
 
 func UpdateBusiness(c *gin.Context){

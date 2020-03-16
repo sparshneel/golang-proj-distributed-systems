@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/gocql/gocql"
 	"github.com/scylladb/gocqlx"
 	"golang-proj-distributed-systems/domain"
 	"golang-proj-distributed-systems/helpers"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/scylladb/gocqlx/qb"
 	"github.com/sirupsen/logrus"
+
 )
 
 
@@ -39,9 +41,19 @@ func DeleteBusiness(businessId string){
 func GetBusinessData(filterIds map [string]string) []domain.Business{
 	logrus.Info("building select query")
 	columns := "id,city,name,state,pincode"
-	stmt, names :=qb.Select(helpers.Table).Columns(helpers.GetColumnsNamesFromArray(strings.Split(columns,","))).Where(qb.Eq("city"),qb.Eq("state")).ToCql()
-	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt),names).BindStruct(filterIds)
-	business := repository.QueryRecords(q)
-	return business
+	businesId,err := gocql.ParseUUID(filterIds["id"])
+	if err != nil{
+		logrus.Error("Error parsing uuid from string")
+		panic("error parsing uuid from string")
+	}
+	business := new(domain.Business)
+	business.Id = businesId
+	business.City = filterIds["city"]
+	business.State = filterIds["state"]
+	stmt, names :=qb.Select(helpers.Table).Columns(helpers.GetColumnsNamesFromArray(strings.Split(columns,","))).
+		Where(qb.Eq("id"),qb.Eq("city"),qb.Eq("state")).ToCql()
+	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt),names).BindStruct(business)
+	businessRecords := repository.QueryRecords(q)
+	return businessRecords
 }
 

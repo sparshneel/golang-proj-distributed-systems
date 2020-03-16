@@ -9,6 +9,6 @@ const (
 
 const Table string="business"
 
-const Keyspace string="killervideo"
+const Keyspace string="yelp"
 
-const Cluster string="localhost"
+const Cluster string="127.0.0.1"
