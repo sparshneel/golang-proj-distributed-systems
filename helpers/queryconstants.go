@@ -12,3 +12,5 @@ const Table string="business"
 const Keyspace string="yelp"
 
 const Cluster string="127.0.0.1"
+
+const SelectColumns string ="id,city,name,state,pincode"
