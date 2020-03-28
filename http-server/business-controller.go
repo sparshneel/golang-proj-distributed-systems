@@ -57,7 +57,11 @@ func UpdateBusiness(c *gin.Context){
 }
 
 func DeleteBusiness(c *gin.Context){
-	service.DeleteBusiness(c.Params.ByName("id"))
+	filterIds :=make(map[string]string)
+	filterIds["id"] = c.Param("id")
+	filterIds["city"] = c.Query("city")
+	filterIds["state"] = c.Query("state")
+	service.DeleteBusiness(filterIds)
 	c.JSON(200, gin.H{
 		"message": "Business with id: " + c.Params.ByName("id") + " deleted successfully",
 	})

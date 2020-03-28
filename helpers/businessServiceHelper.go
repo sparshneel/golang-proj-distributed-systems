@@ -28,7 +28,7 @@ func GetColumnNames(business *domain.Business) string {
 	return stringBuilder.String()
 }
 
-func GetColumnsNamesFromArray(columns []string) string{
+func SliceToString(columns []string) string{
 	return strings.Join(columns,",")
 }
 
