@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func GetColumnNames(business *domain.Business) string {
+func GetColumnNames(business *domain.BusinessRep) string {
 	stringBuilder := strings.Builder{}
 	e := reflect.ValueOf(business).Elem()
 	for i := 0; i < e.NumField(); i++ {

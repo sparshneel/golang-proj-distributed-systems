@@ -13,7 +13,8 @@ func Save(query *gocqlx.Queryx) {
 	logrus.Info("inserting record in the table " + helpers.Table)
 	err := query.ExecRelease()
 	if err !=nil{
-		panic("error inserting data record to table " + helpers.Table + " cause: " + err.Error())
+		logrus.Error("error inserting record to table " + helpers.Table + " cause " + err.Error())
+		panic("error inserting record to table " + helpers.Table + " cause: " + err.Error())
 	}
 	logrus.Info("done inserting record in the table " + helpers.Table)
 }

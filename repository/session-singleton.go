@@ -26,7 +26,6 @@ func  GetSessionInstance() *gocql.Session {
 			panic("error connecting session to cassandra cluster " + helpers.Cluster)
 		}
 	})
-
 	return sessionInstance
 }
 

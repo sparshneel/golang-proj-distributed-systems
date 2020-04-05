@@ -16,7 +16,7 @@ func StartApplication() {
 
 func mapurls() {
 
-	router.GET("/business/:id", http_server.GetBusinessById)
+	router.GET("/business/:id", http_server.GetBusinessByFilter)
 	router.POST("/business", http_server.AddBusiness)
 	router.PUT("/business/:id", http_server.UpdateBusiness)
 	router.DELETE("/business/:id", http_server.DeleteBusiness)
