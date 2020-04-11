@@ -16,27 +16,29 @@ import (
 
 func AddBusiness(business *domain.BusinessRep) (bool,error){
 	logrus.Info("starting save record - table : " + helpers.Table)
-	businessId ,err := gocql.ParseUUID(business.Id)
+	businessId ,err := gocql.RandomUUID()
+	logrus.Info(businessId)
 	if err != nil{
 		logrus.Error("Error parsing uuid from string")
 		panic("error parsing uuid from string")
 	}
-	retrivedBusiness,errBusiness := GetBusinessById(business.Id)
-	if errBusiness == nil {
+	retrivedBusiness,errBusiness := GetBusinessById(businessId.String())
+	if errBusiness.Error() != "" {
 		logrus.Error("error adding business with id " + business.Id + " cause: " + errBusiness.Error())
 	}
 	if retrivedBusiness != nil {
 		return false, errors.New("BusinessAlreadyExists: business with id " + business.Id + " already exists ")
 	}
-	businessDao := domain.Business{
-		Id: businessId,
-		State: business.State,
-		City: business.City,
-		Name: business.Name,
-		Pincode: business.Pincode,
-	}
-	stmt, names := qb.Insert(helpers.Table).Columns(helpers.GetColumnNames(business)).ToCql()
+	businessDao := new(domain.Business)
+	businessDao.Id= businessId
+	businessDao.State= business.State
+	businessDao.City= business.City
+	businessDao.Name= business.Name
+	businessDao.Pincode=business.Pincode
+	logrus.Info(helpers.GetColumnNames(businessDao))
+	stmt, names := qb.Insert(helpers.Table).Columns(helpers.SliceToString(strings.Split(helpers.SelectColumns,","))).ToCql()
 	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt), names).BindStruct(businessDao)
+	logrus.Info(businessDao)
 	repository.Save(q)
 	logrus.Info("record added successfully to table : " + helpers.Table)
 	return true, nil
@@ -49,7 +51,7 @@ func UpdateBusiness(business *domain.BusinessRep) (bool,error){
 		panic("error parsing uuid from string")
 	}
 	retrivedBusiness,errBusiness := GetBusinessById(business.Id)
-	if errBusiness == nil {
+	if errBusiness.Error() != "" {
 		logrus.Error("error updating business with id " + business.Id + " cause: " + errBusiness.Error())
 	}
 	if retrivedBusiness ==  nil {
@@ -63,7 +65,7 @@ func UpdateBusiness(business *domain.BusinessRep) (bool,error){
 		Pincode: business.Pincode,
 	}
 	logrus.Info("building update query")
-	stmt, names:= qb.Update(helpers.Table).Set(helpers.GetColumnNames(business)).Where(qb.Eq("id"),qb.Eq("city"),qb.Eq("state")).ToCql()
+	stmt, names:= qb.Update(helpers.Table).Set(helpers.SliceToString(strings.Split(helpers.SelectColumns,","))).Where(qb.Eq("id"),qb.Eq("city"),qb.Eq("state")).ToCql()
 	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt),names).BindStruct(businessDao)
 	repository.UpdateRecords(q)
 	return true, nil
@@ -77,7 +79,7 @@ func DeleteBusiness(filter map[string]string ) (bool, error){
 		panic("error parsing uuid from string")
 	}
 	retrivedBusiness,errBusiness := GetBusinessById(filter["id"])
-	if errBusiness == nil {
+	if errBusiness.Error() != "" {
 		logrus.Error("error deleting business with id " + filter["id"] + " cause: " + errBusiness.Error())
 	}
 	if retrivedBusiness ==  nil {
@@ -85,8 +87,8 @@ func DeleteBusiness(filter map[string]string ) (bool, error){
 	}
 	business := new(domain.Business)
 	business.Id = businesId
-	business.City = filter["city"]
-	business.State = filter["state"]
+	business.City = retrivedBusiness[0].City
+	business.State = retrivedBusiness[0].State
 	stmt,names := qb.Delete(helpers.Table).Existing().Where(qb.Eq("id"),qb.Eq("city"),qb.Eq("state")).ToCql()
 
 	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt),names).BindStruct(business)
@@ -127,7 +129,7 @@ func GetBusinessById(id string) ([]domain.Business, error){
 		Where(qb.Eq("id")).ToCql()
 	q := gocqlx.Query(repository.GetSessionInstance().Query(stmt),names).BindStruct(business)
 	businessRecords := repository.QueryRecords(q)
-	return businessRecords,nil
+	return businessRecords,errors.New("")
 }
 
 
